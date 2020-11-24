@@ -1,0 +1,44 @@
+service: BuildkiteNightly
+plugins:
+  - serverless-python-requirements
+provider:
+  name: aws
+  runtime: python3.8
+  iamRoleStatements:
+    # TOOD: Proper permissions.
+    - Effect: Allow
+      Action:
+        - s3:*
+        - secretsmanager:*
+      Resource: '*'
+  environment:
+    # TODO: Change.
+    STAGING_BUCKET: cdg-buildkite-staging
+    NIGHTLY_BUCKET: cdg-buildkite-nightly
+functions:
+  promote:
+    handler: promote.handler
+    timeout: 60
+    layers:
+      - !Ref GpgLambdaLayer
+    events:
+      - s3:
+          bucket: ${self:provider.environment.STAGING_BUCKET}
+          existing: true
+          event: s3:ObjectCreated:CompleteMultipartUpload
+    package: {}
+  # docs:
+  #   handler: docs.handler
+  #   layers:
+  #     - arn:aws:lambda:us-east-1:553035198032:layer:git-lambda2:8
+  #   events:
+  #     - s3:
+  #         bucket: ${self:provider.environment.STAGING_BUCKET}
+  #         existing: true
+  #         event: s3:ObjectCreated:Put
+  #         rules:
+  #           - prefix: docs/
+  #   package: {}
+layers:
+  gpg:
+    path: layer
