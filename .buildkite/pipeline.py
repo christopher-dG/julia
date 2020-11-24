@@ -155,7 +155,7 @@ def make_doctest():
 def make_promote_doctest():
     return {
         "label": "Promote: Doctest",
-        "command": "bash .buildkite/promote_doctest.sh",
+        "command": ".buildkite/promote_doctest.sh",
         "if": IS_MASTER,
         "agents": _agents("linux", "x86_64"),
         "depends_on": [

@@ -28,6 +28,7 @@ buildkite-agent artifact upload "$full"
 
 rm -rf /tmp/srcccache
 "$MAKE" JULIA_PRECOMPILE=0 USE_BINARYBUILDER=1 full-source-dist
-full_bb="julia-${JULIA_VERSION}_${JULIA_COMMIT}-full+bb.tar.gz"
-buildkite-agent meta-data set full-source-dist-bb "$full_bb"
-buildkite-agent artifact upload "$full_bb"
+full_bb="julia-${JULIA_VERSION}_${JULIA_COMMIT}-full.tar.gz"
+mv "$full" "bb-$full"
+buildkite-agent meta-data set full-source-dist-bb "bb-$full"
+buildkite-agent artifact upload "bb-$full"
